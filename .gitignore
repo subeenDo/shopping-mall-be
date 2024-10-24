@@ -1,0 +1,5 @@
+# Node 모듈 폴더 (의존성 파일)
+node_modules/
+
+# 환경 변수 파일
+.env
