@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const userSchema = Schema({
     email:{type:String, required:true,unique:true},
     password : {type:String, require:true},
-    name : {type:true, require:true},
+    name : {type:String, require:true},
     level : {type:String, default:"customer"}, //2type:customer,admin
 },
 {timeStamps:true}
