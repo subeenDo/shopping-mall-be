@@ -18,7 +18,7 @@ const productSchema = new Schema({
 productSchema.methods.toJSON = function() {
     const obj = this.toObject(); 
     delete obj.__v;
-    delete obj.updatedAt;
+    //delete obj.updatedAt;
     delete obj.createdAt;
     return obj;
 };
