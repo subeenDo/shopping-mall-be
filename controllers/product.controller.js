@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const productController = {};
+const PAGE_SIZE = 5;
 
 productController.createProduct = async(req, res)=>{
     try{
@@ -16,13 +17,30 @@ productController.createProduct = async(req, res)=>{
     }
 };
 
-productController.getProducts = async(req, res)=>{
-    try{
-        const products = await Product.find({});
-        res.status(200).json({status:"success", products});
-    }catch(error){
-        res.status(400).json({status:"fail", error:error.message});
+
+productController.getProducts = async (req, res) => {
+    try {
+        const { page, name } = req.query;
+        const cond = name ? { name: { $regex: name, $options: "i" } } : {};
+        const response = { status: "success" };
+        let query = Product.find(cond);
+        
+        const totalItemNum = await Product.find(cond).countDocuments(); 
+        const totalPages = Math.ceil(totalItemNum / PAGE_SIZE);
+        response.totalPageNum = totalPages; 
+        
+        if (page) {
+            query = query.skip((page - 1) * PAGE_SIZE).limit(PAGE_SIZE);
+        }
+
+        const productList = await query.exec();
+        response.products = productList;
+        res.status(200).json(response);
+        
+    } catch (err) {
+        res.status(400).json({ status: "fail", message: err.message });
     }
 };
+
 
 module.exports = productController;
