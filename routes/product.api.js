@@ -13,6 +13,8 @@ router.post(
 
 router.get("/", productController.getProducts);
 
+router.get("/:id", productController.getProductDetail);
+
 router.put(
     "/:id", 
     authController.authenticate, 
