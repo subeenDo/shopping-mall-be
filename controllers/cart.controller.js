@@ -40,9 +40,73 @@ cartController.getCartList = async (req, res) => {
       path: "items",
       populate: { path: "productId", model: "Product" },
     });
+    if (!cart) {
+      return res.status(200).json({ status: "success", data: [] });
+    }
     res.status(200).json({ status: "success", data: cart.items });
   } catch (error) {
     res.status(400).json({ status: "fail", error: error.message });
+  }
+};
+
+cartController.deleteCartItem = async(req, res) =>{
+  try{
+    const { userId } = req;
+    const cartItemId = req.params.id;
+    const cart = await Cart.findOne({ userId });
+    if(!cart) throw new Error("cart item doesn't exist");
+    cart.items = cart.items.filter(item => item._id.toString() !== cartItemId);
+    await cart.save();
+    res.status(200).json({ status: "success", message: "Item deleted success" });
+
+  }catch(error){
+      res.status(400).json({ status: "fail", message: error.message });
+  }
+}
+
+cartController.updateCartItem = async(req, res) => {
+  try {
+    const { userId } = req;
+    const { id } = req.params;
+
+    const { qty, size } = req.body;
+    const cart = await Cart.findOne({ userId }).populate({
+      path: "items",
+      populate: {
+        path: "productId",
+        model: "Product",
+      },
+    });
+    if (!cart) throw new Error("There is no cart for this user");
+    const index = cart.items.findIndex((item) => item._id.equals(id));
+
+    if (index === -1) throw new Error("Can not find item");
+    cart.items[index].qty = qty;
+    cart.items[index].size = size;
+    await cart.save();
+
+    res.status(200).json({ status: 200, data: cart.items });
+  } catch (error) {
+    return res.status(400).json({ status: "fail", error: error.message });
+  }
+}
+
+cartController.getCartItemQty = async (req, res) => {
+  try {
+    const { userId } = req;
+    const cart = await Cart.findOne({ userId: userId });
+    console.log('cart',cart);
+    if (!cart) throw new Error("There is no cart for this user");
+    else {
+      
+      const qtyArray = cart.items.map(item => item.qty);
+      let totalQty = 0;
+      qtyArray.forEach(qty => totalQty += qty);      
+
+      res.status(200).json({ status: 200, qty: totalQty});
+    } 
+  } catch (error) {
+    return res.status(400).json({ status: "fail", error: error.message });
   }
 };
 
