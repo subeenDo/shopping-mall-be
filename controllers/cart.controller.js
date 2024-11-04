@@ -95,7 +95,7 @@ cartController.getCartItemQty = async (req, res) => {
   try {
     const { userId } = req;
     const cart = await Cart.findOne({ userId: userId });
-    console.log('cart',cart);
+    
     if (!cart) throw new Error("There is no cart for this user");
     else {
       
