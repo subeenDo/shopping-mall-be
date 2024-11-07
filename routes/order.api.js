@@ -8,24 +8,19 @@ router.post(
     authController.authenticate,
     orderController.createOrder
 );
+router.get(
+    '/', 
+    authController.authenticate, 
+    orderController.getOders
+);
+router.put(
+    '/:orderId', 
+    authController.authenticate, 
+    orderController.updateOrder
+);
 
-// router.get("/", productController.getProducts);
 
-// router.get("/:id", productController.getProductDetail);
 
-// router.put(
-//     "/:id", 
-//     authController.authenticate, 
-//     authController.checkAdminPermission, 
-//     productController.updateProduct
-// );
-
-// router.delete(
-//     "/:id", 
-//     authController.authenticate, 
-//     authController.checkAdminPermission, 
-//     productController.deleteProduct
-// );
 
 
 module.exports=router;
