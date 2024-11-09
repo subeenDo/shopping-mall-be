@@ -94,20 +94,18 @@ cartController.updateCartItem = async(req, res) => {
 cartController.getCartItemQty = async (req, res) => {
   try {
     const { userId } = req;
-    const cart = await Cart.findOne({ userId: userId });
-    
-    if (!cart) throw new Error("There is no cart for this user");
-    else {
-      
-      const qtyArray = cart.items.map(item => item.qty);
-      let totalQty = 0;
-      qtyArray.forEach(qty => totalQty += qty);      
+    const cart = await Cart.findOne({ userId });
 
-      res.status(200).json({ status: 200, qty: totalQty});
-    } 
+    if (!cart) {
+      return res.status(200).json({ status: "success", qty: 0 });
+    } else {
+      const itemCount = cart.items.length;
+      return res.status(200).json({ status: "success", qty: itemCount });
+    }
   } catch (error) {
     return res.status(400).json({ status: "fail", error: error.message });
   }
 };
+
 
 module.exports = cartController;
